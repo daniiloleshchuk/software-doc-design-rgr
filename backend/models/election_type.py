@@ -1,9 +1,9 @@
-from app import db
+from app import db, MODEL_TO_TABLENAME
 from .abstract_model import AbstractModel
 
 
 class ElectionType(AbstractModel):
-    __tablename__ = 'election_types'
+    __tablename__ = MODEL_TO_TABLENAME.get('ElectionType')
 
     pk = db.Column(db.Integer, primary_key=True)
     votes_cancelable = db.Column(db.Boolean, default=False, nullable=False)

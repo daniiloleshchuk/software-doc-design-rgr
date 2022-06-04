@@ -17,3 +17,15 @@ db = SQLAlchemy(app)
 
 HOST = getenv('FLASK_HOST')
 PORT = getenv('FLASK_PORT')
+
+MODEL_TO_TABLENAME = {
+    'Election': 'elections',
+    'ElectionAllowedRegions': 'election_allowed_regions',
+    'CandidatesInElections': 'candidates_in_elections',
+    'ElectionType': 'election_types',
+    'Organization': 'organizations',
+    'Region': 'regions',
+    'User': 'users',
+    'UsersInOrganizations': 'users_in_orgs',
+    'Vote': 'votes'
+}
