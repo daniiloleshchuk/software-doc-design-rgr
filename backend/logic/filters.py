@@ -1,5 +1,5 @@
 from datetime import datetime
-from models import User, Region
+from models import User
 
 
 class FilterException(Exception):
@@ -14,6 +14,7 @@ class AgeFilter:
 
     def set_next(self, next_filter):
         self.next_filter = next_filter
+        return next_filter
 
     def filter(self, **kwargs):
         voter = User._get_by_pk(kwargs["voter_id"])
@@ -30,6 +31,7 @@ class RegionFilter:
 
     def set_next(self, next_filter):
         self.next_filter = next_filter
+        return next_filter
 
     def filter(self, **kwargs):
         region = kwargs["region"]
@@ -46,6 +48,7 @@ class VotesCancelableFilter:
 
     def set_next(self, next_filter):
         self.next_filter = next_filter
+        return next_filter
 
     def filter(self, **kwargs):
         voter = User._get_by_pk(kwargs["voter_id"])
@@ -65,6 +68,7 @@ class DateFilter:
 
     def set_next(self, next_filter):
         self.next_filter = next_filter
+        return next_filter
 
     def filter(self, **kwargs):
         if not (self.start <= self.current_date <= self.end):
@@ -80,6 +84,7 @@ class OrganizationFilter:
 
     def set_next(self, next_filter):
         self.next_filter = next_filter
+        return next_filter
 
     def filter(self, **kwargs):
         voter = User._get_by_pk(kwargs["voter_id"])
