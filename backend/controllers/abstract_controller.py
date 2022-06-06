@@ -26,8 +26,6 @@ class AbstractController(Resource):
         return jsonify(obj)
 
     def post(self):
-        import pdb
-        pdb.set_trace()
         request_data = self.get_parser().parse_args()
         obj = self.get_model()(**request_data)
         obj._save()
