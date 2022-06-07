@@ -1,10 +1,12 @@
 from abc import abstractmethod
-from datetime import datetime
-from models import User, Region
+from datetime import datetime, timezone
+from math import inf
+from models import User
 
 
 class FilterException(Exception):
-    pass
+    def __init__(self, msg):
+        self.msg = msg
 
 
 class AbstractFilter:
@@ -16,19 +18,19 @@ class AbstractFilter:
         return _filter
 
     @abstractmethod
-    def filter(self, request):
+    def filter(self, **kwargs):
         if self._next_filter:
-            return self._next_filter.filter(request)
+            return self._next_filter.filter(**kwargs)
 
 
 class AgeFilter(AbstractFilter):
     def __init__(self, age_from, age_to) -> None:
-        self.age_from = age_from
-        self.age_to = age_to
+        self.age_from = age_from or 0
+        self.age_to = age_to or inf
 
     def filter(self, **kwargs):
         voter = User._get_by_pk(kwargs["voter_id"])
-        if not (self.age_from <= voter.age <= self.age_to):
+        if voter.age and not (self.age_from <= voter.age <= self.age_to):
             raise FilterException("Age not in allowed range")
         if self._next_filter:
             self._next_filter.filter(**kwargs)
@@ -39,8 +41,8 @@ class RegionFilter(AbstractFilter):
         self.allowed_regions = allowed_regions
 
     def filter(self, **kwargs):
-        region = kwargs["region"]
-        if region and region not in self.allowed_regions:
+        region = kwargs["region_id"]
+        if region and region not in [allowed_region.pk for allowed_region in self.allowed_regions]:
             raise FilterException("Region not in allowed regions")
         if self._next_filter:
             self._next_filter.filter(**kwargs)
@@ -63,10 +65,9 @@ class DateFilter(AbstractFilter):
     def __init__(self, start, end) -> None:
         self.start = start
         self.end = end
-        self.current_date = datetime.utcnow()
 
     def filter(self, **kwargs):
-        if not (self.start <= self.current_date <= self.end):
+        if not (self.start <= datetime.now(timezone.utc) <= self.end):
             raise FilterException("Voting is expired")
         if self._next_filter:
             self._next_filter.filter(**kwargs)

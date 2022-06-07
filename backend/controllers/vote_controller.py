@@ -1,7 +1,5 @@
-import json
-
 from typing import Type
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from flask_restful import reqparse
 
 from models import Vote
@@ -28,6 +26,6 @@ class VoteController(AbstractController):
         try:
             registered_vote = vote_service.register_vote(**data)
         except FilterException as err:
-            return jsonify(str(err)), 400
+            return make_response(jsonify({"Error": err.msg}), 400)
         
         return jsonify(registered_vote)

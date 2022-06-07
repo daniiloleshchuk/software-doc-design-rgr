@@ -14,7 +14,7 @@ class ElectionType(AbstractModel):
     regions_allowed = db.relationship('Region', secondary=MODEL_TO_TABLENAME.get('ElectionTypeAllowedRegions'))
 
 
-class ElectionTypeAllowedRegions(db.Model):
+class ElectionTypeAllowedRegions(AbstractModel):
     __tablename__ = MODEL_TO_TABLENAME.get('ElectionTypeAllowedRegions')
 
     election_type_pk = db.Column(db.ForeignKey(MODEL_TO_TABLENAME.get('ElectionType') + '.pk', ondelete='CASCADE'),
