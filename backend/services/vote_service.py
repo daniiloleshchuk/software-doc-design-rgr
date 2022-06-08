@@ -13,13 +13,14 @@ class VoteService:
         self.filters = None
         self.voting_strategy = (PointsVotingStrategy() if election_type.voter_votes_count > 1
                                 else RegularVotingStrategy())
-        self.init_filters(election, election_type)
+        self.init_filters(election)
 
-    def init_filters(self, election, election_type):
-        _filters = (filters.AgeFilter(election_type.age_from, election_type.age_to),
-                    filters.OrganizationFilter(election_type.organization_members_only),
-                    filters.RegionFilter(election_type.regions_allowed),
-                    filters.VotesCancelableFilter(election_type.votes_cancelable),
+    def init_filters(self, election):
+        _filters = (filters.AgeFilter(election.type.age_from, election.type.age_to),
+                    filters.OrganizationFilter(election.type.organization_members_only),
+                    filters.RegionFilter(election.type.regions_allowed),
+                    filters.PointsFilter(election.type.voter_votes_count),
+                    filters.VotesCancelableFilter(election.type.votes_cancelable),
                     filters.DateFilter(election.start, election.end))
 
         for idx, _filter in enumerate(_filters[:-1]):

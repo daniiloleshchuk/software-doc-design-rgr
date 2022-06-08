@@ -10,6 +10,7 @@ class Election(AbstractModel):
     start = db.Column(db.DateTime(timezone=True), nullable=False)
     end = db.Column(db.DateTime(timezone=True), nullable=False)
     candidates = db.relationship('User', secondary=MODEL_TO_TABLENAME.get('CandidatesInElections'))
+    type = db.relationship('ElectionType')
 
 
 class CandidatesInElections(db.Model):

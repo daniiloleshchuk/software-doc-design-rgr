@@ -26,6 +26,8 @@ class CustomJSONEncoder(JSONEncoder):
                 except TypeError:
                     if isinstance(data, list):
                         fields[field] = [self.default(item) for item in data]
+                    elif isinstance(data.__class__, DeclarativeMeta):
+                        fields[field] = self.default(data)
                     else:
                         fields[field] = None
             return fields

@@ -14,6 +14,6 @@ class User(AbstractModel):
     is_organization_member = db.Column(db.Boolean, default=False)
     region = db.relationship('Region')
 
-    def already_voted(self, election_pk):
+    def _already_voted(self, election_pk):
         # TODO
-        pass
+        return False

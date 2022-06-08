@@ -55,7 +55,7 @@ class VotesCancelableFilter(AbstractFilter):
     def filter(self, **kwargs):
         voter = User._get_by_pk(kwargs["voter_id"])
         election_id = kwargs["election_id"]
-        if not self.votes_cancelable and voter.already_voted(election_id):
+        if not self.votes_cancelable and voter._already_voted(election_id):
             raise FilterException("Changing votes is not allowed")
         if self._next_filter:
             self._next_filter.filter(**kwargs)
@@ -72,6 +72,15 @@ class DateFilter(AbstractFilter):
         if self._next_filter:
             self._next_filter.filter(**kwargs)
 
+class PointsFilter(AbstractFilter):
+    def __init__(self, points) -> None:
+        self.points = points
+
+    def filter(self, **kwargs):
+        if sum(kwargs['voting_data'].values()) > self.points:
+            raise FilterException("Total sum of points is bigger than limit")
+        if self._next_filter:
+            self._next_filter.filter(**kwargs)
 
 class OrganizationFilter(AbstractFilter):
     def __init__(self, organization_members_only) -> None:
