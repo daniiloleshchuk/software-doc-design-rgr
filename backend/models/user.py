@@ -1,5 +1,6 @@
 from app import db, MODEL_TO_TABLENAME
 from .abstract_model import AbstractModel
+from .vote import Vote
 
 
 class User(AbstractModel):
@@ -15,5 +16,4 @@ class User(AbstractModel):
     region = db.relationship('Region')
 
     def _already_voted(self, election_pk):
-        # TODO
-        return False
+        return Vote._does_user_voted(voter_pk=self.pk, election_pk=election_pk)
