@@ -16,7 +16,7 @@ class Vote(AbstractModel):
     datetime = db.Column(db.DateTime, nullable=True)
 
     @classmethod
-    def _does_user_voted(cls, voter_pk, election_pk):
+    def _has_user_voted(cls, voter_pk, election_pk):
         return True if cls.query.filter_by(voter_pk=voter_pk, election_pk=election_pk).all() else False
 
     @classmethod
