@@ -6,11 +6,11 @@ class Election(AbstractModel):
     __tablename__ = MODEL_TO_TABLENAME.get('Election')
 
     pk = db.Column(db.Integer, primary_key=True)
-    type_pk = db.Column(db.ForeignKey(MODEL_TO_TABLENAME.get('ElectionType') + '.pk', ondelete='CASCADE'))
+    type_pk = db.Column(db.ForeignKey(MODEL_TO_TABLENAME.get('ElectionType') + '.pk', ondelete='CASCADE'), nullable=False)
     start = db.Column(db.DateTime(timezone=True), nullable=False)
     end = db.Column(db.DateTime(timezone=True), nullable=False)
-    type = db.relationship('ElectionType')
     candidates = db.relationship('User', secondary=MODEL_TO_TABLENAME.get('CandidatesInElections'))
+    type = db.relationship('ElectionType')
 
 
 class CandidatesInElections(db.Model):

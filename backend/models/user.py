@@ -1,5 +1,3 @@
-from email.policy import default
-from xmlrpc.client import Boolean
 from app import db, MODEL_TO_TABLENAME
 from .abstract_model import AbstractModel
 
@@ -15,10 +13,7 @@ class User(AbstractModel):
     age = db.Column(db.Integer, nullable=True)
     is_organization_member = db.Column(db.Boolean, default=False)
     region = db.relationship('Region')
-    elections = db.relationship('Election',
-                                secondary=MODEL_TO_TABLENAME.get('CandidatesInElections'),
-                                back_populates='candidates')
 
-    def already_voted(self, election_pk) -> Boolean:
+    def _already_voted(self, election_pk):
         # TODO
-        pass
+        return False

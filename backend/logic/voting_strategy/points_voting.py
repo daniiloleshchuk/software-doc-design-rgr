@@ -7,7 +7,7 @@ class PointsVotingStrategy:
         votes = []
         for candidate, points in voting_data.items():
             new_vote = Vote(voter_pk=voter,
-                            points=points,
+                            points_count=points,
                             candidate_pk=candidate,
                             election_pk=election)
             new_vote._save()
