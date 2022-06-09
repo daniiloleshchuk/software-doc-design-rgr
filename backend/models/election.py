@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 from app import db, MODEL_TO_TABLENAME
 from .abstract_model import AbstractModel
 
@@ -11,6 +13,11 @@ class Election(AbstractModel):
     end = db.Column(db.DateTime(timezone=True), nullable=False)
     candidates = db.relationship('User', secondary=MODEL_TO_TABLENAME.get('CandidatesInElections'))
     type = db.relationship('ElectionType')
+
+    def __init__(self, days_duration=1, **kwargs):
+        super(Election, self).__init__(**kwargs)
+        self.start = datetime.now(timezone.utc)
+        self.end = self.start + timedelta(days=days_duration)
 
 
 class CandidatesInElections(db.Model):
