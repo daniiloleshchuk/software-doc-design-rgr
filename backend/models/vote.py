@@ -14,3 +14,12 @@ class Vote(AbstractModel):
     election = db.relationship('Election', foreign_keys=(election_pk,))
     points_count = db.Column(db.Integer, default=1, nullable=False)
     datetime = db.Column(db.DateTime, nullable=True)
+
+    @classmethod
+    def _has_user_voted(cls, voter_pk, election_pk):
+        return True if cls.query.filter_by(voter_pk=voter_pk, election_pk=election_pk).all() else False
+
+    @classmethod
+    def remove_user_votes(cls, voter_pk, election_pk):
+        votes = cls.query.filter_by(voter_pk=voter_pk, election_pk=election_pk)
+        votes.delete()

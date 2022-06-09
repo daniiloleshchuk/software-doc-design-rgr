@@ -11,3 +11,12 @@ class ElectionType(AbstractModel):
     age_from = db.Column(db.Integer, nullable=True)
     age_to = db.Column(db.Integer, nullable=True)
     voter_votes_count = db.Column(db.Integer, default=1, nullable=False)
+    regions_allowed = db.relationship('Region', secondary=MODEL_TO_TABLENAME.get('ElectionTypeAllowedRegions'))
+
+
+class ElectionTypeAllowedRegions(AbstractModel):
+    __tablename__ = MODEL_TO_TABLENAME.get('ElectionTypeAllowedRegions')
+
+    election_type_pk = db.Column(db.ForeignKey(MODEL_TO_TABLENAME.get('ElectionType') + '.pk', ondelete='CASCADE'),
+                                 primary_key=True)
+    region_pk = db.Column(db.ForeignKey(MODEL_TO_TABLENAME.get('Region') + '.pk', ondelete='CASCADE'), primary_key=True)

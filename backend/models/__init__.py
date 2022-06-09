@@ -1,7 +1,6 @@
-from .user import User, UsersInOrganizations
+from .user import User
 from .region import Region
-from .organization import Organization
-from .election_type import ElectionType
-from .election import Election, ElectionAllowedRegions, CandidatesInElections
+from .election_type import ElectionType, ElectionTypeAllowedRegions
+from .election import Election, CandidatesInElections
 from .vote import Vote
 

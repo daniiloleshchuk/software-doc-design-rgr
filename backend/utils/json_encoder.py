@@ -1,4 +1,5 @@
 from json import dumps
+from datetime import datetime, date, time
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from flask.json import JSONEncoder
 
@@ -26,6 +27,10 @@ class CustomJSONEncoder(JSONEncoder):
                 except TypeError:
                     if isinstance(data, list):
                         fields[field] = [self.default(item) for item in data]
+                    elif isinstance(data.__class__, DeclarativeMeta):
+                        fields[field] = self.default(data)
+                    elif isinstance(data, datetime) or isinstance(data, date) or isinstance(data, time):
+                        fields[field] = str(data)
                     else:
                         fields[field] = None
             return fields

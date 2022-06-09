@@ -1,5 +1,6 @@
 from app import db, MODEL_TO_TABLENAME
 from .abstract_model import AbstractModel
+from .vote import Vote
 
 
 class User(AbstractModel):
@@ -11,19 +12,8 @@ class User(AbstractModel):
                           nullable=True)
     name = db.Column(db.String(50), nullable=False)
     age = db.Column(db.Integer, nullable=True)
+    is_organization_member = db.Column(db.Boolean, default=False)
     region = db.relationship('Region')
-    elections = db.relationship('Election',
-                                secondary=MODEL_TO_TABLENAME.get('CandidatesInElections'),
-                                back_populates='candidates')
-    organizations = db.relationship('Organization',
-                                    secondary= MODEL_TO_TABLENAME.get('UsersInOrganizations'),
-                                    back_populates='members')
 
-
-class UsersInOrganizations(db.Model):
-    __tablename__ = MODEL_TO_TABLENAME.get('UsersInOrganizations')
-
-    user_pk = db.Column(db.ForeignKey(MODEL_TO_TABLENAME.get('User') + '.pk', ondelete='CASCADE'),
-                        primary_key=True)
-    organization_pk = db.Column(db.ForeignKey(MODEL_TO_TABLENAME.get('Organization') + '.pk', ondelete='CASCADE'),
-                                primary_key=True)
+    def _already_voted(self, election_pk):
+        return Vote._does_user_voted(voter_pk=self.pk, election_pk=election_pk)
