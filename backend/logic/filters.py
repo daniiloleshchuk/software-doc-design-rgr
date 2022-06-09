@@ -48,6 +48,17 @@ class RegionFilter(AbstractFilter):
             self._next_filter.filter(**kwargs)
 
 
+class CandidatesFilter(AbstractFilter):
+    def __init__(self, candidates) -> None:
+        self.allowed_candidates = set([str(candidate.pk) for candidate in candidates])
+
+    def filter(self, **kwargs):
+        candidates = set(kwargs["voting_data"].keys())
+        if not candidates.issubset(self.allowed_candidates):
+            raise FilterException("You voted for a person that isn't a candidate in this election")
+        if self._next_filter:
+            self._next_filter.filter(**kwargs)
+
 class VotesCancelableFilter(AbstractFilter):
     def __init__(self, votes_cancelable) -> None:
         self.votes_cancelable = votes_cancelable

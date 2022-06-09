@@ -17,6 +17,7 @@ class VoteService:
 
     def init_filters(self, election):
         _filters = (filters.AgeFilter(election.type.age_from, election.type.age_to),
+                    filters.CandidatesFilter(election.candidates),
                     filters.OrganizationFilter(election.type.organization_members_only),
                     filters.RegionFilter(election.type.regions_allowed),
                     filters.PointsFilter(election.type.voter_votes_count),
@@ -28,7 +29,7 @@ class VoteService:
 
         self.filters = _filters[0]
 
-    def register_vote(self, voting_data, voter_pk, election_pk, region_pk=None, **kwargs):
-        self.filters.filter(voting_data=voting_data, voter_id=voter_pk, election_id=election_pk, region_id=region_pk)
-        Vote.remove_user_votes(voter_pk=voter_pk, election_pk=election_pk)
-        return self.voting_strategy.register_vote(voting_data, voter_pk, election_pk)
+    def register_vote(self, voting_data, voter_id, election_id, region_id=None, **kwargs):
+        self.filters.filter(voting_data=voting_data, voter_id=voter_id, election_id=election_id, region_id=region_id)
+        Vote.remove_user_votes(voter_pk=voter_id, election_pk=region_id)
+        return self.voting_strategy.register_vote(voting_data, voter_id, region_id)
