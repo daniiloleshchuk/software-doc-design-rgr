@@ -17,3 +17,6 @@ class User(AbstractModel):
 
     def _already_voted(self, election_pk):
         return Vote._does_user_voted(voter_pk=self.pk, election_pk=election_pk)
+
+    def __lt__(self, other):
+        return self.pk < other.pk

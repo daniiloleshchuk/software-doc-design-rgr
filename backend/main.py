@@ -14,6 +14,7 @@ def register_routes(app):
     api.add_resource(RegionController, '/region')
     api.add_resource(UserController, '/user')
     api.add_resource(VoteController, '/vote')
+    api.add_resource(StatsController, '/stats')
 
 
 def main():
