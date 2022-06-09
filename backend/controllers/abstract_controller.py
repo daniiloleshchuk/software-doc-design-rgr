@@ -22,8 +22,11 @@ class AbstractController(Resource):
 
     def get(self):
         url_args = request.args
-        obj = self.get_model()._get_by_pk(pk=url_args.get('pk'))
-        return jsonify(obj)
+        pk = url_args.get('pk')
+        if pk:
+            return jsonify(self.get_model()._get_by_pk(pk=pk))
+        else:
+            return jsonify(self.get_model()._get_all())
 
     def post(self):
         request_data = self.get_parser().parse_args()
