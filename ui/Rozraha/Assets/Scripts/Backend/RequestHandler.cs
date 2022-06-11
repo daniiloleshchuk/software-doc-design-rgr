@@ -16,6 +16,24 @@ namespace Rozraha.Backend
 
 		public string Config { get; private set; }
 
+		private static RequestHandler instance;
+		public static RequestHandler Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = new RequestHandler();
+				}
+				return instance;
+			}
+		}
+
+		private RequestHandler()
+		{
+
+		}
+
 		public async Task<string> SendRequest(HttpMethod method, string uri, string data = null)
 		{
 			this.client = new HttpClient();
