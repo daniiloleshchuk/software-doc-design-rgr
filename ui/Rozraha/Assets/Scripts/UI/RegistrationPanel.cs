@@ -2,6 +2,7 @@ using Rozraha.Backend.Controllers;
 using Rozraha.Backend.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ using UnityEngine.UI;
 namespace Rozraha.UI
 {
 	public class RegistrationPanel : MonoBehaviour
-    {
+	{
 		[SerializeField]
 		private TMP_Dropdown regionsDropdown;
 
@@ -28,9 +29,15 @@ namespace Rozraha.UI
 		[SerializeField]
 		private Button submitButton;
 
+		[SerializeField]
+		private GameObject voteScreen;
+
+		[SerializeField]
+		private GameObject errorMessage;
+
 		private List<Region> regionOptions = new List<Region>();
 
-        private RegionController regionController = new RegionController();
+		private RegionController regionController = new RegionController();
 
 		private UserController userController = new UserController();
 
@@ -38,25 +45,22 @@ namespace Rozraha.UI
 
 		private int selectedRegionIndex;
 
+		private User curentUser;
+
 		private void Awake()
 		{
-			int registered = this.registrationPrefsHandler.LoadFromPrefs();
-			if (registered == 0)
+			int storedId = this.registrationPrefsHandler.LoadFromPrefs	();
+
+			if (storedId > 0)
 			{
-				Region region = new Region { name = "Pavlo" };
-				Region region1 = new Region { name = "Vlad" };
-				Region region2 = new Region { name = "Amogus" };
-
-				this.regionOptions.Add(region);
-				this.regionOptions.Add(region1);
-				this.regionOptions.Add(region2);
-
-				this.regionsDropdown.AddOptions(this.regionOptions.Select(x => x.name).ToList());
-
-				this.regionsDropdown.onValueChanged.AddListener((index) => this.OnDropdownSelected(index));
-
-				this.submitButton.onClick.AddListener(this.OnSubmitButtonClicked);
+				_ = this.OnUserStoredAsync(storedId);
 			}
+
+			this.InitializeRegions();
+
+			this.regionsDropdown.onValueChanged.AddListener((index) => this.OnDropdownSelected(index));
+
+			this.submitButton.onClick.AddListener(this.OnSubmitButtonClickedAsync);
 		}
 
 		private void OnDestroy()
@@ -67,27 +71,42 @@ namespace Rozraha.UI
 
 		private async void InitializeRegions()
 		{
-			/* Supposed to work with non hardcoded values
 			this.regionOptions = await this.regionController.GetAllEntities();
 
 			this.regionsDropdown.AddOptions(this.regionOptions.Select(x => x.name).ToList());
-			*/
 		}
 
 		private void OnDropdownSelected(int index)
 		{
 			this.selectedRegionIndex = index;
-			Debug.Log("Dropdown selected");
 		}
 
-		private void OnSubmitButtonClicked()
+		private async Task OnUserStoredAsync(int storedId)
 		{
-			/* Supposed to work with non hardcoded values
-			User newUser = this.ConstructUser();
-			this.userController.CreateEntity(newUser);
-			this.registrationPrefsHandler.SaveToPrefs(1);
-			*/
-			Debug.Log("Submitted");
+			this.curentUser = await this.userController.GetEntity(storedId);
+			this.OnRegistrationSuccess();
+		}
+
+		private void OnSubmitButtonClickedAsync()
+		{
+			this.CreateUser();
+		}
+
+		private async Task CreateUser()
+		{
+			this.curentUser = await this.userController.CreateEntity(this.ConstructUser(), this.OnRegistrationSuccess, this.OnRegistrationFailure);
+			this.registrationPrefsHandler.SaveToPrefs(this.curentUser.pk);
+		}
+
+		private void OnRegistrationFailure()
+		{
+			this.errorMessage.SetActive(true);
+		}
+
+		private void OnRegistrationSuccess()
+		{
+			this.gameObject.SetActive(false);
+			this.voteScreen.SetActive(true);
 		}
 
 		private User ConstructUser()
@@ -97,7 +116,7 @@ namespace Rozraha.UI
 			user.isOrganizationMember = this.organizationMember.isOn;
 			user.name = this.nameInput.text;
 			user.passportId = this.passportId.text;
-			user.regionPk = this.selectedRegionIndex;
+			user.regionPk = (this.selectedRegionIndex + 1);
 			return user;
 		}
 	}

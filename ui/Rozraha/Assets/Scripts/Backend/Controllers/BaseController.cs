@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Rozraha.Backend.Models;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -48,14 +49,18 @@ namespace Rozraha.Backend.Controllers
 			}
 		}
 
-		public async void CreateEntity(T entity)
+		public async Task<T> CreateEntity(T entity, Action onSuccess = null, Action onFailure = null)
 		{
 			if (entity != null)
 			{
-				await RequestHandler.Instance.SendRequest(HttpMethod.Post,
+				string responseJson = await RequestHandler.Instance.SendRequest(HttpMethod.Post,
 					this.GetCreateRoute(entity),
-					JsonConvert.SerializeObject(entity));
+					JsonConvert.SerializeObject(entity), onSuccess, onFailure);
+
+				return JsonConvert.DeserializeObject<T>(responseJson);
 			}
+
+			return null;
 		}
 	}
 }

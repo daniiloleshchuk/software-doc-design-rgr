@@ -4,7 +4,7 @@ namespace Rozraha.UI
 {
 	public class RegistrationPrefsHandler
 	{
-		private const string REGISTERED_KEY = "Registered_";
+		private const string REGISTERED_KEY = "Registered";
 
 		public void SaveToPrefs(int value)
 		{
@@ -13,7 +13,7 @@ namespace Rozraha.UI
 
 		public int LoadFromPrefs()
 		{
-			return PlayerPrefs.GetInt(REGISTERED_KEY, 0);
+			return PlayerPrefs.GetInt(REGISTERED_KEY, -1);
 		}
 	}
 }

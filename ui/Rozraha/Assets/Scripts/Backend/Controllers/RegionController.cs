@@ -17,7 +17,7 @@ namespace Rozraha.Backend.Controllers
 
 		public override string GetDeleteRoute(int id)
 		{
-			throw new NotImplementedException();
+			return Routes.LOCALHOST_PREFIX + Routes.REGION	+ $"?pk={id}";
 		}
 
 		public override string GetEditRoute(Region entity)

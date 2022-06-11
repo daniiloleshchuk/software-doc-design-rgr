@@ -10,6 +10,7 @@ namespace Rozraha.Backend.Models
 		public int age;
 		[JsonProperty("is_organization_member")]
 		public bool isOrganizationMember;
+		[JsonProperty("passport_id")]
 		public string passportId;
 	}
 }

@@ -27,7 +27,7 @@ namespace Rozraha.Backend.Controllers
 
 		public override string GetSpecificEntityRoute(int id)
 		{
-			throw new NotImplementedException();
+			return Routes.LOCALHOST_PREFIX + Routes.USER + $"?pk={id}";
 		}
 	}
 }

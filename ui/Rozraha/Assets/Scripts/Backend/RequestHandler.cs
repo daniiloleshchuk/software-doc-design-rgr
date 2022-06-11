@@ -34,7 +34,7 @@ namespace Rozraha.Backend
 
 		}
 
-		public async Task<string> SendRequest(HttpMethod method, string uri, string data = null)
+		public async Task<string> SendRequest(HttpMethod method, string uri, string data = null, Action onSuccess = null, Action onFailure = null)
 		{
 			this.client = new HttpClient();
 
@@ -52,11 +52,26 @@ namespace Rozraha.Backend
 				HttpResponseMessage response = await this.client.SendAsync(request);
 				string content = await response.Content.ReadAsStringAsync();
 				Debug.Log(response.StatusCode);
+
+				if (response.StatusCode is System.Net.HttpStatusCode.OK or System.Net.HttpStatusCode.Created or System.Net.HttpStatusCode.Accepted && onSuccess != null)
+				{
+					onSuccess();
+				}
+				else if (onFailure != null)
+				{
+					onFailure();
+				}
 				return content;
 			}
 			catch (ArgumentException argExp)
 			{
 				Debug.Log(argExp);
+
+				if (onFailure != null)
+				{
+					onFailure();
+				}
+
 				return null;
 			}
 		}
