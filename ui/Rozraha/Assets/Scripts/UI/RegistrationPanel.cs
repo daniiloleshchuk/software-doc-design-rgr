@@ -1,5 +1,6 @@
 using Rozraha.Backend.Controllers;
 using Rozraha.Backend.Models;
+using Rozraha.Events;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace Rozraha.UI
 
 		private int selectedRegionIndex;
 
-		private User curentUser;
+		private User currentUser;
 
 		private void Awake()
 		{
@@ -83,7 +84,7 @@ namespace Rozraha.UI
 
 		private async Task OnUserStoredAsync(int storedId)
 		{
-			this.curentUser = await this.userController.GetEntity(storedId);
+			this.currentUser = await this.userController.GetEntity(storedId);
 			this.OnRegistrationSuccess();
 		}
 
@@ -94,8 +95,8 @@ namespace Rozraha.UI
 
 		private async Task CreateUser()
 		{
-			this.curentUser = await this.userController.CreateEntity(this.ConstructUser(), this.OnRegistrationSuccess, this.OnRegistrationFailure);
-			this.registrationPrefsHandler.SaveToPrefs(this.curentUser.pk);
+			this.currentUser = await this.userController.CreateEntity(this.ConstructUser(), this.OnRegistrationSuccess, this.OnRegistrationFailure);
+			this.registrationPrefsHandler.SaveToPrefs(this.currentUser.pk);
 		}
 
 		private void OnRegistrationFailure()
@@ -107,6 +108,7 @@ namespace Rozraha.UI
 		{
 			this.gameObject.SetActive(false);
 			this.voteScreen.SetActive(true);
+			EventAggregator.Instance.Invoke<UserCreated>(new UserCreated(this.currentUser));
 		}
 
 		private User ConstructUser()
