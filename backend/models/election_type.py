@@ -1,4 +1,5 @@
 from app import db, MODEL_TO_TABLENAME
+from .region import Region
 from .abstract_model import AbstractModel
 
 
@@ -12,6 +13,12 @@ class ElectionType(AbstractModel):
     age_to = db.Column(db.Integer, nullable=True)
     voter_votes_count = db.Column(db.Integer, default=1, nullable=False)
     regions_allowed = db.relationship('Region', secondary=MODEL_TO_TABLENAME.get('ElectionTypeAllowedRegions'))
+
+    def __init__(self, regions_allowed_pks=None, **kwargs):
+        super(ElectionType, self).__init__(**kwargs)
+        if regions_allowed_pks:
+            for region_pk in regions_allowed_pks:
+                self.regions_allowed.append(Region._get_by_pk(pk=region_pk))
 
 
 class ElectionTypeAllowedRegions(AbstractModel):
