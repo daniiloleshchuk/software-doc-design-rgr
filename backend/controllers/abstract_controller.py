@@ -46,7 +46,7 @@ class AbstractController(Resource):
         else:
             obj = self.get_model()(**request_data)
         obj._save()
-        return jsonify(obj), 200
+        return jsonify(obj)
 
     def delete(self):
         url_args = request.args
