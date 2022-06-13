@@ -8,6 +8,7 @@ from .abstract_controller import AbstractController
 
 class RegionController(AbstractController):
     _parser = reqparse.RequestParser()
+    _parser.add_argument('name', type=str, required=False)
 
     @classmethod
     def get_model(cls) -> Type[Region]:

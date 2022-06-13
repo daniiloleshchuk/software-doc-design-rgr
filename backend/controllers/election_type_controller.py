@@ -1,5 +1,6 @@
 from typing import Type
 
+from flask import Response
 from flask_restful import reqparse
 
 from models import ElectionType
@@ -16,3 +17,7 @@ class ElectionTypeController(AbstractController):
     @classmethod
     def get_parser(cls) -> reqparse.RequestParser:
         return cls._parser
+
+    @classmethod
+    def put(cls):
+        return Response(status=405)
