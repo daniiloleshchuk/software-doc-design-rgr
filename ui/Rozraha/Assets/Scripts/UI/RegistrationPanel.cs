@@ -36,7 +36,7 @@ namespace Rozraha.UI
 		[SerializeField]
 		private GameObject errorMessage;
 
-		private List<Region> regionOptions = new List<Region>();
+		public List<Region> regionOptions = new List<Region>();
 
 		private RegionController regionController = new RegionController();
 

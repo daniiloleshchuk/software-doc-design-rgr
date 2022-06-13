@@ -29,10 +29,16 @@ namespace Rozraha.UI
 		private Button submitButton;
 
 		[SerializeField]
+		private Button statsButton;
+
+		[SerializeField]
 		private GameObject submitLocker;
 
 		[SerializeField]
 		private VoteScreen voteScreen;
+
+		[SerializeField]
+		private StatsPanel statsPanel;
 
 		private List<CandidatePanel> spawnedCandidates = new List<CandidatePanel>();
 
@@ -45,6 +51,7 @@ namespace Rozraha.UI
 		private void Awake()
 		{
 			this.submitButton.onClick.AddListener(this.OnSubmitted);
+			this.statsButton.onClick.AddListener(this.OnStatsOpened);
 		}
 
 		private void Update()
@@ -58,6 +65,7 @@ namespace Rozraha.UI
 		private void OnDestroy()
 		{
 			this.submitButton.onClick.RemoveAllListeners();
+			this.statsButton.onClick.RemoveAllListeners();
 		}
 
 		public void SetUp(Election election)
@@ -67,6 +75,11 @@ namespace Rozraha.UI
 			this.currentElection.CheckVotedStatus();
 			this.VotesCount = election.type.votesCount;
 			this.availableVotesLabel.text = $"Votes left: {this.VotesCount}";
+
+			if (this.statsPanel.gameObject.activeSelf)
+			{
+				this.OnStatsOpened();
+			}
 
 			if (this.currentElection.voted && !election.type.cancelable)
 			{
@@ -100,6 +113,11 @@ namespace Rozraha.UI
 			this.remainingTimeLabel.text = $"Remaining time: {remainingTime.Days}d," +
 				$" {remainingTime.Hours}h," +
 				$" {remainingTime.Minutes}m";
+		}
+
+		private void OnStatsOpened()
+		{
+			this.statsPanel.SetUp(this.currentElection.pk);
 		}
 
 		private void OnSubmitted()

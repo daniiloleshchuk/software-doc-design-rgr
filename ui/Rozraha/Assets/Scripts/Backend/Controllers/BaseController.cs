@@ -39,6 +39,13 @@ namespace Rozraha.Backend.Controllers
 			return JsonConvert.DeserializeObject<T>(responseJson);
 		}
 
+		public async Task<List<T>> GetAllEntitiesById(int id)
+		{
+			string responseJson = await RequestHandler.Instance.SendRequest(HttpMethod.Get, this.GetSpecificEntityRoute(id));
+
+			return JsonConvert.DeserializeObject<List<T>>(responseJson);
+		}
+
 		public async void EditEntity(T entity)
 		{
 			if (entity != null)
