@@ -8,7 +8,7 @@ python3 -m venv /path/to/new/virtual/environment
 .\path\to\new\virtual\environment\Scripts\activate
 
 4. Install requirements
-(переходите в папку backend) і pip install -r requirements.txt
+pip install -r requirements.txt
 
 5. Run 
 python main.py
