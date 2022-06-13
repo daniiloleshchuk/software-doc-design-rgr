@@ -9,5 +9,7 @@
 		public const string USER = "/user";
 
 		public const string ELECTION = "/election";
+
+		public const string VOTE = "/vote";
 	}
 }

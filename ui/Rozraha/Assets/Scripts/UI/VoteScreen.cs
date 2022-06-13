@@ -22,13 +22,17 @@ namespace Rozraha.UI
 
 		private List<Election> elections;
 
-		private User currentUser;
+		public User CurrentUser { get; private set; }
 
 		private ElectionController electionController = new ElectionController();
 
 		private void Awake()
 		{
 			EventAggregator.Instance.Subscribe<UserCreated>(this.OnUserCreated);
+		}
+
+		private void OnEnable()
+		{
 			this.InitializeElections();
 		}
 
@@ -40,7 +44,11 @@ namespace Rozraha.UI
 		private async void InitializeElections()
 		{
 			this.elections = await this.electionController.GetAllEntities();
-			this.electionMenu.SetUp(this.elections.Find(x => !this.UserUnableToVote(x)));
+			Election election = this.elections.Find(x => !this.UserUnableToVote(x));
+			if (election != null)
+			{
+				this.electionMenu.SetUp(election);
+			}
 			this.PopulateElectionButtons();
 		}
 
@@ -60,16 +68,16 @@ namespace Rozraha.UI
 		private bool UserUnableToVote(Election election)
 		{
 			ElectionType electionType = election.type;
-			return this.currentUser.isOrganizationMember != electionType.organizationMembersOnly
-				|| !electionType.regionsAllowed.Any(x => x.pk == this.currentUser.regionPk)
-				|| !this.ValidateUserAge(this.currentUser, electionType)
-				|| !(DateTime.UtcNow > election.start)
-				|| !(DateTime.UtcNow < election.end);
+			return this.CurrentUser.isOrganizationMember != electionType.organizationMembersOnly
+				|| !electionType.regionsAllowed.Any(x => x.pk == this.CurrentUser.regionPk)
+				|| !this.ValidateUserAge(this.CurrentUser, electionType)
+				|| !(DateTime.Now > election.start)
+				|| !(DateTime.Now < election.end);
 		}
 
 		private bool ValidateUserAge(User user, ElectionType electionType)
 		{
-			bool isValidAge = false;
+			bool isValidAge = true;
 			if (electionType.ageFrom != null)
 			{
 				isValidAge = user.age > electionType.ageFrom;
@@ -83,7 +91,7 @@ namespace Rozraha.UI
 
 		private void OnUserCreated(UserCreated args)
 		{
-			this.currentUser = args.user;
+			this.CurrentUser = args.user;
 		}
 	}
 }

@@ -428,7 +428,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   label: {fileID: 8122739349994947741}
-  electionMenu: {fileID: 0}
   locker: {fileID: 7199098441191715090}
 --- !u!1 &8918862289490503853
 GameObject:

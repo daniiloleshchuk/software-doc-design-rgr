@@ -8,7 +8,8 @@ namespace Rozraha.UI
 {
 	public class CandidatePanel : MonoBehaviour
 	{
-		public event Action<int> Voted;
+		public event Action VoteAdded;
+		public event Action VoteRemoved;
 
 		[SerializeField]
 		private TextMeshProUGUI nameLabel;
@@ -29,6 +30,8 @@ namespace Rozraha.UI
 
 		public User Candidate { get; private set; }
 
+		private ElectionMenu electionMenu;
+
 		private void Awake()
 		{
 			this.addVoteButton.onClick.AddListener(this.AddVote);
@@ -37,7 +40,8 @@ namespace Rozraha.UI
 
 		private void Update()
 		{
-			this.addVoteButton.interactable = this.VotesCount > 0;
+			this.addVoteButton.interactable = this.electionMenu.VotesCount > 0;
+			this.removeVoteButton.interactable = this.VotesCount > 0;
 		}
 
 		private void OnDestroy()
@@ -46,13 +50,12 @@ namespace Rozraha.UI
 			this.removeVoteButton.onClick.RemoveAllListeners();
 		}
 
-		public void SetUp(User candidate, ElectionType electionType)
+		public void SetUp(User candidate, ElectionType electionType, ElectionMenu electionMenu)
 		{
 			this.nameLabel.text = candidate.name;
 			this.ageLabel.text = candidate.age.ToString();
-			this.votesCountLabel.text = electionType.votesCount.ToString();
-			this.VotesCount = electionType.votesCount;
 			this.Candidate = candidate;
+			this.electionMenu = electionMenu;
 		}
 
 		public void Lock()
@@ -63,14 +66,22 @@ namespace Rozraha.UI
 
 		private void AddVote()
 		{
-			this.VotesCount--;
-			this.Voted?.Invoke(this.VotesCount);
+			if (this.electionMenu.VotesCount > 0)
+			{
+				this.VotesCount++;
+				this.votesCountLabel.text = this.VotesCount.ToString();
+				this.VoteAdded?.Invoke();
+			}
 		}
 
 		private void RemoveVote()
 		{
-			this.VotesCount++;
-			this.Voted?.Invoke(this.VotesCount);
+			if (this.VotesCount > 0)
+			{
+				this.VotesCount--;
+				this.votesCountLabel.text = this.VotesCount.ToString();
+				this.VoteRemoved?.Invoke();
+			}
 		}
 	}
 }

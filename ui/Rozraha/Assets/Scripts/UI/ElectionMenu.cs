@@ -1,4 +1,5 @@
-﻿using Rozraha.Backend.Models;
+﻿using Rozraha.Backend.Controllers;
+using Rozraha.Backend.Models;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -30,9 +31,16 @@ namespace Rozraha.UI
 		[SerializeField]
 		private GameObject submitLocker;
 
+		[SerializeField]
+		private VoteScreen voteScreen;
+
 		private List<CandidatePanel> spawnedCandidates = new List<CandidatePanel>();
 
 		private Election currentElection;
+
+		private VoteController voteController = new VoteController();
+
+		public int VotesCount { get; private set; }
 
 		private void Awake()
 		{
@@ -55,9 +63,10 @@ namespace Rozraha.UI
 		public void SetUp(Election election)
 		{
 			this.electionIdLabel.text = $"Election {election.pk}";
-			this.availableVotesLabel.text = $"Votes left: {election.type.votesCount}";
 			this.currentElection = election;
 			this.currentElection.CheckVotedStatus();
+			this.VotesCount = election.type.votesCount;
+			this.availableVotesLabel.text = $"Votes left: {this.VotesCount}";
 
 			if (this.currentElection.voted && !election.type.cancelable)
 			{
@@ -87,10 +96,10 @@ namespace Rozraha.UI
 
 		private void UpdateRemainingTime()
 		{
-			TimeSpan remainingTime = this.currentElection.end - DateTime.UtcNow;
-			this.remainingTimeLabel.text = $"Remaining time: {remainingTime.Days} days," +
-				$" {remainingTime.Hours} hours," +
-				$" {remainingTime.Seconds} seconds";
+			TimeSpan remainingTime = this.currentElection.end - DateTime.Now;
+			this.remainingTimeLabel.text = $"Remaining time: {remainingTime.Days}d," +
+				$" {remainingTime.Hours}h," +
+				$" {remainingTime.Minutes}m";
 		}
 
 		private void OnSubmitted()
@@ -100,18 +109,43 @@ namespace Rozraha.UI
 			{
 				this.Lock();
 			}
+
+			Vote vote = new Vote();
+			vote.electionId = this.currentElection.pk;
+			vote.electionPk = this.currentElection.pk;
+			vote.voterId = this.voteScreen.CurrentUser.pk;
+			vote.regionId = this.voteScreen.CurrentUser.regionPk;
+			vote.votingData = new Dictionary<int, int>();
+
+			foreach(CandidatePanel candidate in this.spawnedCandidates)
+			{
+				if (candidate.VotesCount > 0)
+				{
+					vote.votingData.Add(candidate.Candidate.pk, candidate.VotesCount);
+				}
+			}
+
+			this.voteController.CreateEntity(vote);
 		}
 
-		private void OnVoted(int votesCount)
+		private void VoteAdded()
 		{
-			this.availableVotesLabel.text = $"Votes left: {votesCount}";
+			this.VotesCount--;
+			this.availableVotesLabel.text = $"Votes left: {this.VotesCount}";
+		}
+
+		private void VoteRemoved()
+		{
+			this.VotesCount++;
+			this.availableVotesLabel.text = $"Votes left: {this.VotesCount}";
 		}
 
 		private void CreateCandidate(User candidateUser)
 		{
 			CandidatePanel candidate = Instantiate(this.candidatePanel, this.candidatesContainer);
-			candidate.SetUp(candidateUser, this.currentElection.type);
-			candidate.Voted += this.OnVoted;
+			candidate.SetUp(candidateUser, this.currentElection.type, this);
+			candidate.VoteAdded += this.VoteAdded;
+			candidate.VoteRemoved += this.VoteRemoved;
 			this.spawnedCandidates.Add(candidate);
 		}
 
@@ -119,7 +153,8 @@ namespace Rozraha.UI
 		{
 			foreach (CandidatePanel candidate in this.spawnedCandidates)
 			{
-				candidate.Voted -= this.OnVoted;
+				candidate.VoteAdded -= this.VoteAdded;
+				candidate.VoteRemoved -= this.VoteRemoved;
 			}
 		}
 
@@ -128,7 +163,7 @@ namespace Rozraha.UI
 			this.UnsubscribeCandidates();
 			for (int i = 0; i < this.candidatesContainer.childCount; i++)
 			{
-				Destroy(this.candidatesContainer.GetChild(i));
+				Destroy(this.candidatesContainer.GetChild(i).gameObject);
 			}
 			this.spawnedCandidates.Clear();
 		}

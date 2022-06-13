@@ -17,7 +17,7 @@ namespace Rozraha.Backend.Models
 
         public void CheckVotedStatus()
 		{
-            this.voted = bool.Parse(PlayerPrefs.GetString(this.pk.ToString(), "0"));
+            this.voted = Convert.ToBoolean(int.Parse(PlayerPrefs.GetString(this.pk.ToString(), "0")));
 		}
     }
 }

@@ -85,7 +85,10 @@ namespace Rozraha.UI
 		private async Task OnUserStoredAsync(int storedId)
 		{
 			this.currentUser = await this.userController.GetEntity(storedId);
-			this.OnRegistrationSuccess();
+			if (this.currentUser != null)
+			{
+				this.OnRegistrationSuccess();
+			}
 		}
 
 		private void OnSubmitButtonClickedAsync()

@@ -40,7 +40,7 @@ namespace Rozraha.UI
 
 		public void Lock()
 		{
-			this.locker.gameObject.SetActive(false);
+			this.locker.gameObject.SetActive(true);
 			this.label.gameObject.SetActive(false);
 			this.buttonComponent.interactable = false;
 		}
