@@ -12,6 +12,7 @@ class ElectionController(AbstractController):
     _parser = reqparse.RequestParser()
     _parser.add_argument('days_duration', type=int, required=False)
     _parser.add_argument('type_pk', type=int, required=False)
+    _parser.add_argument('candidates_pks', type=int, action='append', required=False)
 
     @classmethod
     def get_model(cls) -> Type[Election]:
