@@ -39,9 +39,11 @@ namespace Rozraha.UI
 
 		private async void SetUpStatsAsync(int electionId)
 		{
+			this.ClearCandidates();
+
 			List<CandidateWithStats> candidates = await this.candidateWithStatsController.GetAllEntitiesById(electionId);
 
-			candidates.Sort((p, q) => p.totalVotes.CompareTo(q.totalVotes));
+			candidates.Sort((p, q) => q.totalVotes.CompareTo(p.totalVotes));
 
 			foreach (CandidateWithStats candidate in candidates)
 			{
@@ -68,7 +70,7 @@ namespace Rozraha.UI
 		{
 			for (int i = 0; i < this.candidateStatsContainer.childCount; i++)
 			{
-				Destroy(this.candidateStatsContainer.GetChild(i));
+				Destroy(this.candidateStatsContainer.GetChild(i).gameObject);
 			}
 		}
 	}

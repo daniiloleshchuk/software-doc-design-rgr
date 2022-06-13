@@ -26,7 +26,7 @@ namespace Rozraha.Backend.Controllers
 
 		public override string GetSpecificEntityRoute(int id)
 		{
-			throw new System.NotImplementedException();
+			return Routes.LOCALHOST_PREFIX + Routes.STATS + $"?election_pk={id}";
 		}
 	}
 }

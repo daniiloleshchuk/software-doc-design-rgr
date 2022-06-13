@@ -51,7 +51,7 @@ namespace Rozraha.UI
 		private void Awake()
 		{
 			this.submitButton.onClick.AddListener(this.OnSubmitted);
-			this.statsButton.onClick.AddListener(this.OnStatsOpened);
+			this.statsButton.onClick.AddListener(this.UpdateStats);
 		}
 
 		private void Update()
@@ -76,10 +76,7 @@ namespace Rozraha.UI
 			this.VotesCount = election.type.votesCount;
 			this.availableVotesLabel.text = $"Votes left: {this.VotesCount}";
 
-			if (this.statsPanel.gameObject.activeSelf)
-			{
-				this.OnStatsOpened();
-			}
+			this.UpdateStats();
 
 			if (this.currentElection.voted && !election.type.cancelable)
 			{
@@ -115,7 +112,7 @@ namespace Rozraha.UI
 				$" {remainingTime.Minutes}m";
 		}
 
-		private void OnStatsOpened()
+		private void UpdateStats()
 		{
 			this.statsPanel.SetUp(this.currentElection.pk);
 		}

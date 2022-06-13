@@ -50,6 +50,7 @@ namespace Rozraha.UI
 
 		private void Awake()
 		{
+			//PlayerPrefs.DeleteAll();
 			int storedId = this.registrationPrefsHandler.LoadFromPrefs	();
 
 			if (storedId > 0)
@@ -88,6 +89,7 @@ namespace Rozraha.UI
 			if (this.currentUser != null)
 			{
 				this.OnRegistrationSuccess();
+				EventAggregator.Instance.Invoke<UserCreated>(new UserCreated(this.currentUser));
 			}
 		}
 
@@ -100,6 +102,7 @@ namespace Rozraha.UI
 		{
 			this.currentUser = await this.userController.CreateEntity(this.ConstructUser(), this.OnRegistrationSuccess, this.OnRegistrationFailure);
 			this.registrationPrefsHandler.SaveToPrefs(this.currentUser.pk);
+			EventAggregator.Instance.Invoke<UserCreated>(new UserCreated(this.currentUser));
 		}
 
 		private void OnRegistrationFailure()
@@ -111,7 +114,6 @@ namespace Rozraha.UI
 		{
 			this.gameObject.SetActive(false);
 			this.voteScreen.SetActive(true);
-			EventAggregator.Instance.Invoke<UserCreated>(new UserCreated(this.currentUser));
 		}
 
 		private User ConstructUser()

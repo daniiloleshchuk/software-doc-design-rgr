@@ -11,5 +11,7 @@
 		public const string ELECTION = "/election";
 
 		public const string VOTE = "/vote";
+
+		public const string STATS = "/stats";
 	}
 }
